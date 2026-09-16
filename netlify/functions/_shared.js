@@ -36,5 +36,8 @@ export async function backendConsole(path, { method = 'GET', session, body } = {
 }
 
 export function json(statusCode, obj) {
-  return { statusCode, headers: { 'content-type': 'application/json' }, body: JSON.stringify(obj) };
+  return new Response(JSON.stringify(obj), {
+    status: statusCode,
+    headers: { 'content-type': 'application/json' },
+  });
 }
