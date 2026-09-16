@@ -1,0 +1,13 @@
+[build]
+  publish = "public"
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
+
+# Backend base URL and secrets are set as environment variables in the Netlify
+# dashboard (server-side only, never bundled into the browser):
+#   BACKEND_URL       = https://agentpay-m3.onrender.com
+#   CONSOLE_TOKEN     = <the same server-to-server token set on Render>
+#   ANTHROPIC_API_KEY = <your Anthropic key>
+#   CLAUDE_MODEL      = claude-sonnet-5   (optional)
