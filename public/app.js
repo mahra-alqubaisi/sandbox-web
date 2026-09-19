@@ -117,11 +117,20 @@ function runSummary() {
     ${pending ? `<div class="working" style="margin-top:14px">${pending} payment needs your approval — see the Approvals tab.</div>` : ''}`;
 }
 
+function paymentStatus(p) {
+  if (p.status === 'settled') return { cls: 'go', text: 'Paid' };
+  if (p.status === 'created' || p.status === 'pending' || p.status === 'processing') return { cls: 'hold', text: 'Processing' };
+  if (p.status === 'failed') return { cls: 'stop', text: 'Failed' };
+  if (p.status === 'returned' || p.status === 'reversed') return { cls: 'stop', text: 'Returned' };
+  if (p.outcome === 'escalate') return { cls: 'wait', text: 'Needs approval' };
+  if (p.outcome === 'deny') return { cls: 'stop', text: 'Refused' };
+  return { cls: 'wait', text: 'Unknown status' };
+}
+
 function paymentRow(p) {
-  const w = p.status === 'settled' || p.status === 'created' ? 'go' : p.outcome === 'escalate' ? 'wait' : p.status;
-  const label = p.status === 'settled' ? 'Paid' : p.status === 'created' ? 'Paid' : p.status;
+  const s = paymentStatus(p);
   return `<div class="row"><div><div class="t">${p.counterparty ? cleanHandle(p.counterparty) : (p.agent || '')}</div><div class="s">${p.purpose || ''}</div></div>
-    <div class="r"><div class="v">${money(p.amount, p.currency)}</div><div class="status ${w}">${label}</div></div></div>`;
+    <div class="r"><div class="v">${money(p.amount, p.currency)}</div><div class="status ${s.cls}">${s.text}</div></div></div>`;
 }
 
 function agentsView() {
@@ -173,6 +182,12 @@ async function runInstruction() {
   state.lastRun = r.json;
   await refreshAll();
   render();
+  // Settlement is asynchronous. Re-read backend state a few times so
+  // Processing resolves to Paid on its own. Status is always re-read
+  // from the backend, never inferred.
+  for (const delay of [1200, 2500, 4500, 8000]) {
+    setTimeout(async () => { await refreshAll(); render(); }, delay);
+  }
 }
 
 async function approve(id, ok) {
@@ -180,6 +195,13 @@ async function approve(id, ok) {
   await fn('console', { method: 'POST', qs: `?op=${ok ? 'approve' : 'decline'}&id=${decoded}` });
   await refreshAll();
   render();
+  // Only an approval creates a payment that then settles asynchronously.
+  // A decline creates nothing, so there is nothing to wait for.
+  if (ok) {
+    for (const delay of [1200, 2500, 4500, 8000]) {
+      setTimeout(async () => { await refreshAll(); render(); }, delay);
+    }
+  }
 }
 
 // ---- render ----
