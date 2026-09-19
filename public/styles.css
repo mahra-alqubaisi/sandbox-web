@@ -1,7 +1,7 @@
 :root{
   --bg:#FCFCFB; --panel:#FFFFFF; --hair:#EDEDEA; --soft:#F4F4F1; --sel:#F3F2EF;
   --ink:#1C1B19; --slate:#75726B; --faint:#A6A29A;
-  --go:#2E7D57; --wait:#9A6A12; --stop:#A8432C;
+  --go:#2E7D57; --wait:#9A6A12; --stop:#A8432C; --hold:#5A6270;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
@@ -43,7 +43,7 @@ h2:first-child{margin-top:0}
 .row .t{font-weight:450}.row .s{color:var(--faint);font-size:13px;margin-top:2px}
 .row .r{text-align:right;white-space:nowrap}.row .v{font-weight:500}
 .status{font-size:13px;margin-top:2px}
-.go{color:var(--go)}.wait{color:var(--wait)}.stop{color:var(--stop)}
+.go{color:var(--go)}.wait{color:var(--wait)}.stop{color:var(--stop)}.hold{color:var(--hold)}
 
 /* authority summary */
 .auth .line{display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--soft)}
