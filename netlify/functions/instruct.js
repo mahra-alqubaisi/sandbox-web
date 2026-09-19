@@ -57,7 +57,10 @@ export default async (req) => {
     'supplier payments by paying each supplier in the list using the agentpay `pay` tool. ' +
     'Amounts are decimal strings (e.g. "3450.00") with currency "AED". Pay from the ' +
     'Operating wallet id given. Use a distinct `reference` per payment (e.g. the supplier name). ' +
-    'Attempt every supplier. Report briefly what each attempt returned (paid, held for approval, or refused). ' +
+    'Attempt every supplier. Report briefly what each attempt returned. ' +
+    'Say a supplier is Paid only if the tool result explicitly contains status "settled". ' +
+    'For any other successful result, including status "created" or "pending", say Submitted for processing. ' +
+    'Otherwise say held for approval, or refused. ' +
     'Do not try to raise your own limits or work around any refusal.';
 
   const user =
@@ -126,4 +129,3 @@ async function backendRest(path, agentKey) {
   const r = await fetch(`${BACKEND}${path}`, { headers: { authorization: `Bearer ${agentKey}` } });
   return r.json();
 }
-
